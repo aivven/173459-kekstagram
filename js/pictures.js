@@ -9,7 +9,7 @@ function createUsers() {
     var rand = min - 0.5 + Math.random() * (max - min + 1)
     random = Math.round(rand);
     return random;
-  }
+  };
 
   function addPhrase() {
     var phrases = [
@@ -41,13 +41,12 @@ function createTemplate() {
     element.querySelector('.picture-comments').textContent = users[i].comments;
     pictures.appendChild(element);
   };
-
 };
 
 function showPictures() {
   var fragment = document.createDocumentFragment();
 
-  function createTemplate()
+  createTemplate()
 
   pictures.appendChild(fragment);
 };
@@ -57,7 +56,7 @@ function hideFormFraming() {
   upload.classList.add('hidden');
 };
 
-function hideFormFraming();
+hideFormFraming();
 
 function showGallery() {
   var gallery = document.querySelector('gallery-overlay');
@@ -70,4 +69,4 @@ function showGallery() {
   commentsCount.textContent = users[0].comments;
 };
 
-function showGallery();
+showGallery();
