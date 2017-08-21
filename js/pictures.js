@@ -28,7 +28,8 @@ function createUsers() {
     users[x] = {
       url: 'photos/' + (x + 1) + '.jpg',
       likes: getRandomInt(15, 200),
-      comments: function addPhrase()};
+      comments: addPhrase()
+    };
   };
 };
 
