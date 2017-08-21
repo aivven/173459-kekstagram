@@ -6,7 +6,7 @@ var template = document.querySelector('#picture-template').content.querySelector
 
 function createUsers() {
   function getRandomInt(min, max) {
-    var rand = min - 0.5 + Math.random() * (max - min + 1)
+    var rand = min - 0.5 + Math.random() * (max - min + 1);
     random = Math.round(rand);
     return random;
   };
@@ -32,6 +32,8 @@ function createUsers() {
     };
   };
 };
+
+createUsers();
 
 function createTemplate() {
   for (var i = 0; i <= users.length; i++) {
