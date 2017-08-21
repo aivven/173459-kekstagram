@@ -27,7 +27,7 @@ function createUsers() {
   for (x = 0; x <= users.length; x++) {
     users[x] = {
       url: 'photos/' + (x + 1) + '.jpg',
-      likes: function getRandomInt(15, 200),
+      likes: getRandomInt(15, 200),
       comments: function addPhrase()
     };
   };
