@@ -2,7 +2,7 @@
 
 var users = new Array(25);
 var pictures = document.querySelector('.pictures');
-var template = document.querySelector('#picture-template').content.querySelector('.picture');
+var template = document.querySelector('#picture-template');
 
 function createUsers() {
   function getRandomInt(min, max) {
@@ -30,19 +30,24 @@ function createUsers() {
       likes: getRandomInt(15, 200),
       comments: addPhrase()
     };
+    return users[x];
   }
+  return users;
 }
 
 createUsers();
 
 function createTemplate() {
+  var fragment = document.createDocumentFragment();
+
   for (var i = 0; i <= users.length; i++) {
-    var element = template.cloneNode(true);
+    var element = template.content.querySelector('.picture').cloneNode(true);
     element.querySelector('img').src = users[i].url;
     element.querySelector('.picture-likes').textContent = users[i].likes;
     element.querySelector('.picture-comments').textContent = users[i].comments;
-    pictures.appendChild(element);
   }
+
+  fragment.appendChild(element);
 }
 
 function showPictures() {
@@ -53,14 +58,14 @@ function showPictures() {
 showPictures();
 
 function hideFormFraming() {
-  var upload = document.querySelector('upload-overlay');
+  var upload = document.querySelector('.upload-overlay');
   upload.classList.add('hidden');
 }
 
 hideFormFraming();
 
 function showGallery() {
-  var gallery = document.querySelector('gallery-overlay');
+  var gallery = document.querySelector('.gallery-overlay');
   gallery.classList.remove('hidden');
   var galleryImage = gallery.querySelector('.gallery-overlay-image');
   galleryImage.src = users[0].url;
