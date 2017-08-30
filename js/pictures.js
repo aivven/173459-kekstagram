@@ -1,6 +1,7 @@
 'use strict';
 
 var ESC_KEYCODE = 27;
+var ENTER_KEYCODE = 13;
 
 var users = new Array(25);
 var pictures = document.querySelector('.pictures');
@@ -76,6 +77,10 @@ var popup = document.querySelector('.gallery-overlay');
 var popupOpen = document.querySelectorAll('.picture')[1];
 var popupClose = document.querySelector('.gallery-overlay-close');
 
+var closePopup = function () {
+  popup.classList.add('hidden');
+  document.removeEventListener('keydown', onPopupEscPress);
+};
 
 var onPopupEscPress = function (evt) {
   if (evt.keyCode === ESC_KEYCODE) {
@@ -83,13 +88,16 @@ var onPopupEscPress = function (evt) {
   }
 };
 
-var closePopup = function () {
-  popup.classList.add('hidden');
-  document.removeEventListener('keydown', onPopupEscPress);
-};
-
 popupClose.addEventListener('click', closePopup);
 
-var openPopup = showGallery(1);
+popupClose.addEventListener('keydown', function (evt) {
+  if (evt.keyCode === ENTER_KEYCODE) {
+    closePopup();
+  }
+});
+
+var openPopup = function () {
+  showGallery(1);
+};
 
 popupOpen.addEventListener('click', openPopup);
