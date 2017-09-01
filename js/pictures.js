@@ -1,6 +1,5 @@
 'use strict';
 
-var ESC_KEYCODE = 27;
 var ENTER_KEYCODE = 13;
 
 var users = new Array(25);
@@ -78,23 +77,13 @@ var pictures = document.querySelectorAll('.picture');
 var popupClose = document.querySelector('.gallery-overlay-close');
 
 
-var onPopupEscPress = function (evt) {
-  if (evt.keyCode === ESC_KEYCODE) {
-    closePopup();
-  }
-};
-
-var closePopup = function () {
-  event.preventDefault();
+popupClose.addEventListener('click', function () {
   popup.classList.add('hidden');
-  document.removeEventListener('keydown', onPopupEscPress);
-};
-
-popupClose.addEventListener('click', closePopup);
+});
 
 popupClose.addEventListener('keydown', function (evt) {
   if (evt.keyCode === ENTER_KEYCODE) {
-    closePopup();
+    popup.classList.add('hidden');
   }
 });
 
