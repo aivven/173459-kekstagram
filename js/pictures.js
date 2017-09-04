@@ -76,19 +76,14 @@ function showGallery(n) {
 var popup = document.querySelector('.gallery-overlay');
 var picturesPreview = document.querySelectorAll('.picture');
 var popupClose = document.querySelector('.gallery-overlay-close');
-
 var onPopupEscPress = function (evt) {
   if (evt.keyCode === ESC_KEYCODE) {
     closePopup();
   }
 };
-
 var closePopup = function () {
   popup.classList.add('hidden');
-  document.removeEventListener('keydown', onPopupEscPress);
-};
-
-popupClose.addEventListener('click', closePopup);
+});
 
 function addHandlersToPicturesElements() {
   function generate(i) {
