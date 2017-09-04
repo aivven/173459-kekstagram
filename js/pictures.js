@@ -5,7 +5,7 @@ var ESC_KEYCODE = 27;
 var ENTER_KEYCODE = 13;
 
 var users = new Array(25);
-var pictures = document.querySelector('.pictures');
+var picturesBlock = document.querySelector('.pictures');
 var template = document.querySelector('#picture-template');
 
 function createUsers() {
@@ -54,7 +54,7 @@ function createTemplate() {
   return fragment;
 }
 
-pictures.appendChild(createTemplate());
+picturesBlock.appendChild(createTemplate());
 
 function hideFormFraming() {
   var upload = document.querySelector('.upload-overlay');
