@@ -39,7 +39,6 @@ function createUsers() {
 
 createUsers();
 
-
 function createTemplate() {
   var fragment = document.createDocumentFragment();
 
@@ -78,7 +77,6 @@ var popup = document.querySelector('.gallery-overlay');
 var pictures = document.querySelectorAll('.picture');
 var popupClose = document.querySelector('.gallery-overlay-close');
 
-
 var onPopupEscPress = function (evt) {
   if (evt.keyCode === ESC_KEYCODE) {
     closePopup();
@@ -92,31 +90,34 @@ var closePopup = function () {
 
 popupClose.addEventListener('click', closePopup);
 
-function generate(i) {
-  return function (e) {
-    e.preventDefault();
-    showGallery(i);
-  };
-}
+function addHandlersToPicturesElements() {
+  function generate(i) {
+    return function (e) {
+      e.preventDefault();
+      showGallery(i);
+    };
+  }
 
-for (var i = 0; i < pictures.length; i++) {
-  var currentHandler = generate(i);
-  pictures[i].addEventListener('click', currentHandler);
+  for (var i = 0; i < pictures.length; i++) {
+    var currentHandler = generate(i);
+    pictures[i].addEventListener('click', currentHandler);
+  }
 }
+addHandlersToPicturesElements();
+// такие большие штуки оборачиваем в функции - смотри примерно на пункты в задании
 
-var uploadSselectImage = document.querySelector('#upload-select-image');
-var uploadFormCancel = uploadSselectImage.querySelector('.upload-form-cancel');
-var uploadFile = uploadSselectImage.querySelector('#upload-file');
-var uploadOverlay = uploadSselectImage.querySelector('.upload-overlay');
-var uploadResizeControlsValue = uploadSselectImage.querySelector('.upload-resize-controls-value');
-var uploadResizeControlsButtons = uploadSselectImage.querySelectorAll('.upload-resize-controls-button');
+var uploadSelectImage = document.querySelector('#upload-select-image');
+var uploadFormCancel = uploadSelectImage.querySelector('.upload-form-cancel');
+var uploadFileElem = uploadSelectImage.querySelector('#upload-file');
+var uploadOverlay = uploadSelectImage.querySelector('.upload-overlay');
 var effectImagePreview = uploadOverlay.querySelector('.effect-image-preview');
 
 function onUploadFile() {
-  uploadSselectImage.querySelector('.upload-image').classList.add('hidden');
+  uploadSelectImage.querySelector('.upload-image').classList.add('hidden');
   uploadOverlay.classList.remove('hidden');
   document.addEventListener('keydown', onUploadOverlayEscPress);
-  uploadOverlay.querySelector('.upload-effect-level').style.display = 'none';
+  // uploadOverlay.querySelector('.upload-effect-level').style.display = 'none';
+  // нам этот элемент еще пригодится
 }
 
 function onUploadOverlayEscPress(evt) {
@@ -129,11 +130,13 @@ function onUploadOverlayEscPress(evt) {
 }
 
 function onCloseUploadOverlay() {
-  uploadSselectImage.querySelector('.upload-image').classList.remove('hidden');
+  uploadSelectImage.querySelector('.upload-image').classList.remove('hidden');
   uploadOverlay.classList.add('hidden');
+  document.removeEventListener('keydown', onUploadOverlayEscPress);
+  // не забываем снимать обработчики с документа когда они не нужны
 }
 
-uploadFile.addEventListener('change', onUploadFile);
+uploadFileElem.addEventListener('change', onUploadFile);
 uploadFormCancel.addEventListener('click', onCloseUploadOverlay);
 uploadFormCancel.addEventListener('keydown', function (evt) {
   if (evt.keyCode === ENTER_KEYCODE) {
@@ -141,14 +144,42 @@ uploadFormCancel.addEventListener('keydown', function (evt) {
   }
 });
 
-for (var s = 0; s < uploadResizeControlsButtons.length; s++) {
-  uploadResizeControlsButtons[s].addEventListener('click', function (event) {
-    var step = event.target.classList.contains('upload-resize-controls-button-inc') ? STEP : -STEP;
-    var valueFile = parseInt(uploadResizeControlsValue.value.substring(0, uploadResizeControlsValue.value.length - 1), 10);
-    var newSize = valueFile + step;
-    if (newSize <= 100 && newSize >= 25) {
-      uploadResizeControlsValue.value = newSize + '%';
-      effectImagePreview.style = 'transform: scale(' + newSize / 100 + ')';
-    }
-  });
+function addResizeControlsLogic() {
+  var uploadResizeControlsValue = uploadSelectImage.querySelector('.upload-resize-controls-value');
+  var uploadResizeControlsButtons = uploadSelectImage.querySelectorAll('.upload-resize-controls-button');
+  for (var i = 0; i < uploadResizeControlsButtons.length; i++) {
+    uploadResizeControlsButtons[i].addEventListener('click', function (event) {
+      var step = event.target.classList.contains('upload-resize-controls-button-inc') ? STEP : -STEP;
+      // var valueFile = parseInt(uploadResizeControlsValue.value.substring(0, uploadResizeControlsValue.value.length -
+      // 1), 10);
+      var currentSize = parseInt(uploadResizeControlsValue.value, 10);
+      // parseInt умный, с таким справляется сам
+      var newSize = currentSize + step;
+      if (newSize <= 100 && newSize >= 25) {
+        uploadResizeControlsValue.value = newSize + '%';
+        effectImagePreview.style = 'transform: scale(' + newSize / 100 + ')';
+      }
+    });
+  }
 }
+
+addResizeControlsLogic();
+// больше функций - с ними удобно
+
+// теперь делаем применение эффектов через делегирование. нам понадобится найти обертку для блоков выбора эффекта
+// через селектор '.upload-effect-controls' и повесить на него обработчик клика.
+// uploadOverlay.querySelector('.upload-effect-controls').addEventListener('click', console.log);
+// там внутри дивы обернутые в label которые прячут сами радио-кнопки. у радио-кнопок в поле значения лежат названия
+// эффектов. при клике до обертке всплывет два события - от дива, и потом уж и от инпута.
+// uploadOverlay.querySelector('.upload-effect-controls').addEventListener('click', function (e){
+//   console.log(e.target)
+// });
+// значит нам нужно проверять в событии таргет тип элемента,
+// и если он нам подходит, то брать от него значение эффекта и ставить соответствующий класс на картинку
+// uploadOverlay.querySelector('.upload-effect-controls').addEventListener('click', function (e) {
+//   if (e.target.tagName === 'INPUT') {
+//     console.log(e.target.value);
+//   }
+// });
+// как вариант можно отслеживать событие 'change' на форме, и фильтровать нужные инпуты
+// то есть у нас один обработчик справится с кликами по всем картинкам, не нужны циклы,  индексы и замыкания
