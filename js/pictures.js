@@ -107,6 +107,7 @@ addHandlersToPicturesElements();
 // такие большие штуки оборачиваем в функции - смотри примерно на пункты в задании
 
 var uploadSelectImage = document.querySelector('#upload-select-image');
+
 var uploadFormCancel = uploadSelectImage.querySelector('.upload-form-cancel');
 var uploadFileElem = uploadSelectImage.querySelector('#upload-file');
 var uploadOverlay = uploadSelectImage.querySelector('.upload-overlay');
