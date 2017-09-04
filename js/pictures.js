@@ -81,9 +81,13 @@ var onPopupEscPress = function (evt) {
     closePopup();
   }
 };
+
 var closePopup = function () {
   popup.classList.add('hidden');
-});
+  document.removeEventListener('keydown', onPopupEscPress);
+};
+
+popupClose.addEventListener('click', closePopup);
 
 function addHandlersToPicturesElements() {
   function generate(i) {
