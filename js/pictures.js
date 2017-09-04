@@ -151,4 +151,4 @@ for (var s = 0; s < uploadResizeControlsButtons.length; s++) {
       effectImagePreview.style = 'transform: scale(' + newSize / 100 + ')';
     }
   });
-}
+};
