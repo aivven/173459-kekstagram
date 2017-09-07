@@ -158,3 +158,149 @@ function addResizeControlsLogic() {
 }
 
 addResizeControlsLogic();
+
+var uploadFormDescription = uploadSelectImage.querySelector('.upload-form-description');
+
+uploadFormDescription.addEventListener('invalid', function () {
+  if (!uploadFormDescription.validity.valid) {
+    if (uploadFormDescription.value.length < 30) {
+      uploadFormDescription.setCustomValidity('Комментарий должен содержать не менее 30 символов');
+      uploadFormDescription.style.border = '1px solid red';
+    } else if (uploadFormDescription.value.length > 100) {
+      uploadFormDescription.setCustomValidity('Комментарий должен содержать не более 100 символов');
+      uploadFormDescription.style.border = '1px solid red';
+    } else if (uploadFormDescription.validity.valueMissing) {
+      uploadFormDescription.setCustomValidity('Обязательное поле');
+      uploadFormDescription.style.border = '1px solid red';
+    }
+  } else {
+    uploadFormDescription.setCustomValidity('');
+    uploadFormDescription.style.border = 'none';
+  }
+});
+
+uploadFormDescription.addEventListener('input', function (evt) {
+  var target = evt.target;
+  if (target.value.length < 30) {
+    target.setCustomValidity('Комментарий должен содержать не менее 30 символов');
+    uploadFormDescription.style.border = '1px solid red';
+  } else {
+    target.setCustomValidity('');
+    target.style.border = 'none';
+  }
+});
+
+function onChangeFilterEffects(evt) {
+  var target = evt.target;
+
+  if (target.tagName === 'INPUT') {
+    effectImagePreview.style.filter = '';
+    effectImagePreview.className = 'effect-image-preview';
+    effectImagePreview.classList.add(target.id.replace('upload-', ''));
+    if (effectImagePreview.classList.contains('effect-none')) {
+      uploadOverlay.querySelector('.upload-effect-level').style.display = 'none';
+    } else {
+      uploadOverlay.querySelector('.upload-effect-level').style.display = '';
+    }
+  } else {
+    return;
+  }
+}
+
+uploadOverlay.querySelector('.upload-effect-controls').addEventListener('click', onChangeFilterEffects);
+
+var uploadFormHashtags = uploadOverlay.querySelector('.upload-form-hashtags');
+
+function onValidHashtags() {
+
+  var target = event.target;
+  var arrayHashtags = target.value.split(' ');
+  if (arrayHashtags.length > 5) {
+    target.setCustomValidity('В строке указано больше 5 хэштэгов');
+    target.style.border = 'red solid 1px';
+  } else {
+    for (var index = 0; index < arrayHashtags.length; index++) {
+      arrayHashtags.sort();
+      if (arrayHashtags[index].length > 20) {
+        target.setCustomValidity('Хэштэг не может содержать более 20 символов');
+        target.style.border = 'red solid 1px';
+        break;
+      } else if (arrayHashtags[index].charAt(0) !== '#') {
+        target.setCustomValidity('Хэштэг должен начинаться с символа "#"');
+        target.style.border = 'red solid 1px';
+        break;
+      } else if (arrayHashtags[index].lastIndexOf('#') > 0) {
+        target.setCustomValidity('Хэштэги должны разделяться пробелом');
+        target.style.border = 'red solid 1px';
+        break;
+      } else if ((index !== arrayHashtags.length - 1) && (arrayHashtags[index + 1] === arrayHashtags[index])) {
+        target.setCustomValidity('В строке указаны повторяющиеся хэштэги');
+        target.style.border = 'red solid 1px';
+        break;
+      } else {
+        target.setCustomValidity('');
+        target.style.border = 'none';
+      }
+    }
+  }
+}
+
+uploadFormHashtags.addEventListener('change', onValidHashtags);
+
+var uploadEffectLevelPin = uploadOverlay.querySelector('.upload-effect-level-pin');
+var uploadEffectLevelVal = uploadOverlay.querySelector('.upload-effect-level-val');
+
+uploadEffectLevelPin.addEventListener('mousedown', function (evt) {
+  evt.preventDefault();
+
+  var MIN_COORD = 8;
+  var MAX_COORD = 446;
+  var sliderCoord;
+
+  var startCoordsX = evt.clientX;
+
+  var onMouseMove = function (moveEvt) {
+    moveEvt.preventDefault();
+
+    var shiftX = startCoordsX - moveEvt.clientX;
+    startCoordsX = moveEvt.clientX;
+
+    if (uploadEffectLevelPin.offsetLeft - shiftX <= MIN_COORD) {
+      sliderCoord = MIN_COORD;
+    } else if (uploadEffectLevelPin.offsetLeft - shiftX >= MAX_COORD) {
+      sliderCoord = MAX_COORD;
+    } else {
+      sliderCoord = uploadEffectLevelPin.offsetLeft - shiftX;
+    }
+
+    uploadEffectLevelPin.style.left = sliderCoord + 'px';
+    var valPercent = Math.floor(sliderCoord / (MAX_COORD / 100));
+    uploadEffectLevelVal.style.width = valPercent > 100 ? 100 + '%' : valPercent + '%';
+
+    onMousedownChangeFilter(valPercent);
+  };
+
+  var onMouseUp = function (upEvt) {
+    upEvt.preventDefault();
+
+    document.removeEventListener('mousemove', onMouseMove);
+    document.removeEventListener('mouseup', onMouseUp);
+  };
+
+  document.addEventListener('mousemove', onMouseMove);
+  document.addEventListener('mouseup', onMouseUp);
+});
+
+function onMousedownChangeFilter(value) {
+  if (effectImagePreview.classList.contains('effect-chrome')) {
+    effectImagePreview.style.filter = 'grayscale(' + (value / 100) + ')';
+  } else if (effectImagePreview.classList.contains('effect-sepia')) {
+    effectImagePreview.style.filter = 'sepia(' + value / 100 + ')';
+  } else if (effectImagePreview.classList.contains('effect-marvin')) {
+    effectImagePreview.style.filter = 'invert(' + value + '%)';
+  } else if (effectImagePreview.classList.contains('effect-phobos')) {
+    effectImagePreview.style.filter = 'blur(' + (3 / (100 / value)) + 'px)';
+  } else if (effectImagePreview.classList.contains('effect-heat')) {
+    effectImagePreview.style.filter = 'brightness(' + (3 / (100 / value)) + ')';
+  }
+}
